@@ -20,7 +20,7 @@ struct Inject<T>: EnumeratingViewModifier where T: ViewModifier {
   }
 }
 
-struct HighlightIfOdd: ViewModifier {
+struct HighlightOddRow: ViewModifier {
   @Environment(\.enumeratedValue) var enumeratedValue
 
   var shouldHighlight: Bool { !enumeratedValue.isMultiple(of: 2) }
@@ -35,7 +35,7 @@ struct EnvironmentValueView: View {
 
   var body: some View {
     VStack {
-      ForEach(fruit, id: \.self, modifier: Inject(modifier: HighlightIfOdd())) { fruit in
+      ForEach(fruit, id: \.self, modifier: Inject(modifier: HighlightOddRow())) { fruit in
         Text(fruit)
           .frame(maxWidth: .infinity)
           .padding()
