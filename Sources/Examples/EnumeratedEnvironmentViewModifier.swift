@@ -1,32 +1,23 @@
 import EnumeratingViewModifier
 import SwiftUI
 
-private struct EnumeratedValueKey: EnvironmentKey {
-  static let defaultValue: Int = 0
-}
-
-extension EnvironmentValues {
-  var enumeratedValue: Int {
-    get { self[EnumeratedValueKey.self] }
-    set { self[EnumeratedValueKey.self] = newValue }
-  }
-}
-
-struct Inject<T>: EnumeratingViewModifier where T: ViewModifier {
-  var modifier: T
-
-  func body(n: Int, content: Content) -> some View {
-    content.modifier(modifier).environment(\.enumeratedValue, n)
-  }
-}
-
-struct HighlightOddRow: ViewModifier {
+struct HighlightOddRow: EnumeratedViewModifier {
   @Environment(\.enumeratedValue) var enumeratedValue
 
   var shouldHighlight: Bool { !enumeratedValue.isMultiple(of: 2) }
 
   func body(content: Content) -> some View {
-    content.overlay(Color.orange.opacity(shouldHighlight ? 0.3 : 0))
+    content.background(Color.orange.opacity(shouldHighlight ? 0.3 : 0))
+  }
+}
+
+struct EmphasizeThird: EnumeratedViewModifier {
+  @Environment(\.enumeratedValue) var enumeratedValue
+
+  var shouldEmphasize: Bool { enumeratedValue == 2 }
+
+  func body(content: Content) -> some View {
+    content.font(shouldEmphasize ? .title : .body)
   }
 }
 
@@ -35,7 +26,11 @@ struct EnvironmentValueView: View {
 
   var body: some View {
     VStack {
-      ForEach(fruit, id: \.self, modifier: Inject(modifier: HighlightOddRow())) { fruit in
+      ForEach(
+        fruit,
+        id: \.self,
+        modifier: .inject(HighlightOddRow().concat(EmphasizeThird()))
+      ) { fruit in
         Text(fruit)
           .frame(maxWidth: .infinity)
           .padding()
