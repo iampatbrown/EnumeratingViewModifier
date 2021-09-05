@@ -12,14 +12,23 @@ struct ColorizeBackground: EnumeratingViewModifier {
 
 struct ColorizeExampleView: View {
   var body: some View {
-    VStack(spacing: 0) {
-      ColorizeBackground()
-      Text("This")
-      Text("is")
-      Text("just")
-      Text("an")
-      Text("Example")
-    }.foregroundColor(.black)
+    ScrollView {
+      VStack(spacing: 0) {
+        VStack(spacing: 0) {
+          ColorizeBackground()
+          Text("This")
+          Text("is")
+          Text("just")
+          Text("an")
+          Text("Example")
+        }.foregroundColor(.black)
+        VStack(spacing: 0) {
+          ForEach(0 ..< 20, modifier: ColorizeBackground(colors: [.black, .gray])) { i in
+            Text("Item \(i)").foregroundColor(.white)
+          }
+        }
+      }
+    }
   }
 }
 
